@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "css-loader": "^6.4.0"
+  },
+  "dependencies": {
+    "stats.js": "^0.17.0"
+  }
+}
