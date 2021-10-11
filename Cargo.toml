@@ -1,5 +1,5 @@
 [package]
-name = "wasm-game-of-life"
+name = "better-wasm-game-of-life"
 version = "0.1.0"
 authors = ["tddebart <tddebart@gmail.com>"]
 edition = "2018"
@@ -12,7 +12,8 @@ default = ["console_error_panic_hook"]
 
 [dependencies]
 wasm-bindgen = "0.2.63"
-js-sys = "0.3"
+js-sys = "0.3.55"
+fixedbitset = "0.4.0"
 
 
 # The `console_error_panic_hook` crate provides better debugging of panics by

@@ -1,5 +1,5 @@
-import { Universe, Cell } from "wasm-game-of-life";
-import { memory } from "wasm-game-of-life/wasm_game_of_life_bg";
+import {Universe, Cell} from "better-wasm-game-of-life";
+import { memory } from "better-wasm-game-of-life/better_wasm_game_of_life_bg";
 import Stats from "stats.js";
 
 // Framerate
@@ -85,6 +85,12 @@ const drawCells = () => {
     }
 
     ctx.stroke();
+};
+
+const bitIsSet = (n, arr) => {
+    const byte = Math.floor(n / 8);
+    const mask = 1 << (n % 8);
+    return (arr[byte] & mask) === mask;
 };
 
 // canvas.addEventListener('mousemove', function(evt) {

@@ -3,6 +3,8 @@
     "css-loader": "^6.4.0"
   },
   "dependencies": {
+    "better-wasm-game-of-life": "file:pkg",
+    "pkg": "^5.3.3",
     "stats.js": "^0.17.0"
   }
 }
