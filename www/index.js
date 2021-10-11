@@ -25,6 +25,8 @@ canvas.width = (CELL_SIZE + 1) * width + 1;
 
 const ctx = canvas.getContext('2d');
 
+let animationId = null;
+
 const renderLoop = () => {
     stats.begin()
 
@@ -35,8 +37,36 @@ const renderLoop = () => {
 
     stats.end();
 
-    requestAnimationFrame(renderLoop);
+    animationId = requestAnimationFrame(renderLoop);
 };
+
+const isPaused = () => {
+    return animationId === null;
+};
+
+//#region pause button
+const playPauseButton = document.getElementById("play-pause");
+
+const play = () => {
+    playPauseButton.textContent = "⏸";
+    renderLoop();
+};
+
+const pause = () => {
+    playPauseButton.textContent = "▶";
+    cancelAnimationFrame(animationId);
+    animationId = null;
+};
+
+// noinspection JSUnusedLocalSymbols
+playPauseButton.addEventListener("click", event => {
+    if (isPaused()) {
+        play();
+    } else {
+        pause();
+    }
+});
+//#endregion
 
 const drawGrid = () => {
     ctx.beginPath();
@@ -87,11 +117,60 @@ const drawCells = () => {
     ctx.stroke();
 };
 
-const bitIsSet = (n, arr) => {
-    const byte = Math.floor(n / 8);
-    const mask = 1 << (n % 8);
-    return (arr[byte] & mask) === mask;
-};
+var mouseDown = 0;
+document.body.onmousedown = function() {
+    mouseDown = 1;
+}
+document.body.onmouseup = function() {
+    mouseDown = 0;
+}
+
+canvas.addEventListener("mousemove", event => {
+    if(mouseDown === 1) {
+        turnCell(event, true)
+    }
+});
+canvas.addEventListener("click", event => {
+    turnCell(event, true)
+});
+// canvas.addEventListener("contextmenu", event => {
+//     turnCell(event, false)
+// });
+
+function turnCell(event, on) {
+    const boundingRect = canvas.getBoundingClientRect();
+
+    const scaleX = canvas.width / boundingRect.width;
+    const scaleY = canvas.height / boundingRect.height;
+
+    const canvasLeft = (event.clientX - boundingRect.left) * scaleX;
+    const canvasTop = (event.clientY - boundingRect.top) * scaleY;
+
+    const row = Math.min(Math.floor(canvasTop / (CELL_SIZE + 1)), height - 1);
+    const col = Math.min(Math.floor(canvasLeft / (CELL_SIZE + 1)), width - 1);
+    if(on === true) {
+        universe.cell_on(row, col);
+    } else {
+        universe.cell_off(row,col)
+    }
+
+    drawGrid()
+    drawCells()
+}
+
+document.getElementById('clear').onclick = Clear
+
+function Clear() {
+    for (let i = 0; i < universe.width(); i++) {
+        for (let j = 0; j < universe.height(); j++) {
+            universe.cell_off(j,i);
+        }
+    }
+    drawGrid()
+    drawCells()
+}
+
+document.addEventListener('contextmenu', event => event.preventDefault());
 
 // canvas.addEventListener('mousemove', function(evt) {
 //     let mousePos = getMousePos(canvas, evt);
@@ -108,7 +187,6 @@ const bitIsSet = (n, arr) => {
 //     };
 // }
 
-// Start the draw loop
-drawGrid();
-drawCells();
-requestAnimationFrame(renderLoop);
+// start the game
+play();
+
